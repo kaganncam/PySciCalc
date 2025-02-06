@@ -12,6 +12,9 @@ E = numpy.e
 class Calculator():
     history = []
     @staticmethod
+    def Radyan(a):
+        return numpy.radians(a)
+    @staticmethod
     def Add(a,b):
         result =  numpy.add(a,b)
         Calculator.history.append(f"{a} + {b} = {result}")
@@ -48,22 +51,22 @@ class Calculator():
         return result
     @staticmethod
     def Sin(a):
-        result =  numpy.sin(a)
+        result =  numpy.sin(Calculator.Radyan(a))
         Calculator.history.append(f"sin({a}) = {result}")
         return result
     @staticmethod
     def Cos(a):
-        result =  numpy.cos(a)
+        result =  numpy.cos(Calculator.Radyan(a))
         Calculator.history.append(f"cos({a}) = {result}")
         return result
     @staticmethod
     def Tan(a):
-        result =  numpy.tan(a)
+        result =  numpy.tan(Calculator.Radyan(a))
         Calculator.history.append(f"tan({a}) = {result}")
         return result
     @staticmethod
     def Cot(a):
-        result =  1/ numpy.tan(a) 
+        result =  1/ numpy.tan(Calculator.Radyan(a)) 
         Calculator.history.append(f"cot({a}) = {result}")
         return result
     @staticmethod
@@ -78,11 +81,12 @@ class Calculator():
     
 class Application(App):
     def build(self): 
-        self.operation = ""
-        self.c = Calculator()
-        self.numbers = []
         self.result = ""
-        button_texts = ["0","1","2","3","4","5","6","7","8","9","=","x","sin","cos","tan","cot","fact","log","pwr","sqr","-","+","/","."]
+        button_texts = [
+            "0","1","2","3","4","5","6","7","8","9"
+            ,"=","*","sin","cos","tan","cot","fact","log","pwr","sqr"
+            ,"-","+","/","."
+        ]
         layout = GridLayout(cols=6,spacing = [10,10])
         self.label = Label(text = f"Sonuç: {self.result}",font_size = 20)        
         for button_name in button_texts:
@@ -94,35 +98,32 @@ class Application(App):
         return layout
         
     def button_bind(self,instance):
-        
-        if instance.text in ["1","2","3","4","5","6","7","8","9","."] and instance not in ["sin","cos","tan","cot","fact","log","pwr","sqr"]:
-                                    
-            self.result += instance.text 
-            self.label.text = f"Sonuç = {self.result}"     
-        if instance.text in ["x","+","-","/"] and self.result[-1] not in ["1","2","3","4","5","6","7","8","9",".","sin","cos","tan","cot","fact","log","pwr","sqr"]:
-            self.operation = instance.text
-            self.numbers.append(float(self.result))
-            self.numbers.append(operation)
-            self.label.text = f"Sonuç {self.result} {instance.text}" 
-            
-        
-        if self.operation is not "" and instance.text == "=" and len(self.numbers) == 3:
-            a = float(self.numbers[0])
-            b = float(self.numbers[2])
-            self.operation = self.numbers[1]
-            if self.operation =="+":
-                self.result = str(self.c.Add(a,b))
-                self.label.text = f"Sonuç {self.result}"
-            elif self.operation == "-":
-                self.result = str(self.c.Subtract(a,b))
-                self.label.text = f"Sonuç {self.result}"
-            elif self.operation == "x":
-                self.result = str(self.c.Multiply(a,b))
-                self.label.text = f"Sonuç {self.result}"
-            elif self.operation == "/":
-                self.result = str(self.c.Divide(a,b))
-                self.label.text = f"Sonuç {self.result}"
+        key = instance.text 
+        if key == "=":
+            self.calculate_results()
+        else:
+             if key in ["-","+","/","*"]:
+                self.result += f" {key} "
+             elif key in ["sin","cos","tan","cot","fact","log","pwr","sqr"]:
+                self.result = f"{key}({self.result})"
+                self.label.text = f"Result: {key}({self.result})"
+             else:
+                self.result += key
 
+            
+            
+             self.label.text = f"Result: {self.result}"
+    def calculate_results(self):
+        try:
+            result = eval((self.result),{"__builtins__":None},{"sin": Calculator.Sin, "cos":Calculator.Cos ,
+                 "tan":Calculator.Tan , "sqrt":Calculator.Square ,"cot":Calculator.Cot ,"fact":Calculator.Factorial 
+                 ,"log":Calculator.Log ,"pwr":Calculator.Power,"sqr":Calculator.Square})
+            self.label.text = f"Result: {result}"
+            self.result = str(result)
+        except Exception as e:
+            print(f"Eror: {e}")
+            self.result = ""
+            self.label.text = "Error"
 if __name__ == "__main__":
     Application().run()
 
