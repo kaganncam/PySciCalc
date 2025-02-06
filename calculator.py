@@ -1,7 +1,14 @@
 import math
 import numpy
+import keyboard
 from kivy.app import App
 from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.textinput import TextInput
+"""
+Bu kütüphane beni aşar
+"""
 PI = numpy.pi
 E = numpy.e
 
@@ -46,7 +53,24 @@ def Factorial(a):
         return None
 
 class Aplication(App):
-     def build(self):
-          return  Label(text = "Hello  World")
-Myapp = Aplication()
-Myapp.run()
+    def build(self): 
+        button_texts = ["0","1","2","3","4","5","6","7","8","9","=","x","sin","cos","tan","cot","fact","log","pwr","sqr","-","+","/","."]
+        self.label = Label(text="Metin girin ve Butona tıklayın")
+        self.text_ınput= TextInput(hint_text = "Buraya bişeyler yaz")
+        button = Button(text = "Butona tıkla")
+        button.bind(on_press = self.show_text)
+        
+        layout =  BoxLayout(orientation="vertical")
+        layout.add_widget(self.label)
+        layout.add_widget(button)
+        layout.add_widget(self.text_ınput)
+        return layout
+    
+    def show_text(self,instance):
+        input = self.text_ınput.text 
+        self.label.text = f"Girilen yazı {input}"
+        
+     
+
+if __name__ == "__main__":
+    Aplication().run()
