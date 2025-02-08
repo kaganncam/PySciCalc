@@ -20,8 +20,8 @@ This is a simple scientific calculator application built using the **Kivy framew
    git clone https://github.com/yourusername/kivy-calculator.git
 ## Install dependencies
  ```
-pip install kivy
-pip install numpy
+  pip install kivy
+  pip install numpy
 ```
 ## How It Works
 
